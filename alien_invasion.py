@@ -2,6 +2,7 @@ import sys
 import pygame
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 
 class AlienInvasion:
@@ -19,6 +20,7 @@ class AlienInvasion:
         # # self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
+        self.bullets = pygame.sprite.Group()
 
     def _check_events(self):
         """Реагує на натискання клавіш та миші"""
@@ -38,6 +40,8 @@ class AlienInvasion:
 
         if event.key == pygame.K_END:
             sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
         elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
@@ -51,12 +55,31 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    def _fire_bullet(self):
+        """Створити кулю та додати її до групи куль"""
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def _update_bullets(self):
+        """Оновити позицію куль та позбавитись старих куль"""
+
+        # Оновити позиції куль
+        self.bullets.update()
+        # Позбавитись куль, що зникли
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+
     def _update_screen(self):
         """Оновлюється зображення на екрані та перемикається на новий екран"""
 
         # Наново перемальовуе екран на кожній ітерації циклу
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
+        pygame.display.flip()
 
     def run_game(self):
         """Розпочинае головний цикл гри"""
@@ -65,6 +88,7 @@ class AlienInvasion:
             # Слідкуе за поведінкою миші та клавіатури та миші
             self._check_events()
             self.ship.update()
+            self._update_bullets()
             self._update_screen()
 
 
