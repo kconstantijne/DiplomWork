@@ -1,9 +1,11 @@
 import sys
 import pygame
+from time import sleep
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from game_stats import GameStats
 
 
 class AlienInvasion:
@@ -20,6 +22,7 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         # # self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
+        self.stats = GameStats(self)
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -59,6 +62,23 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
+    def _ship_hit(self):
+        """Реагувати на зіткнення прибульця з кораблем"""
+
+        if self.stats.ships_left > 0:
+            # Зменшити ships_left
+            self.stats.ships_left -= 1
+            # Позбавитись надлишку прибульців та куль
+            self.aliens.empty()
+            self.bullets.empty()
+            # Створити новий флот та відцентрувати корабель
+            self._create_fleet()
+            self.ship.center_ship()
+            # Пауза
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
+
     def _fire_bullet(self):
         """Створити кулю та додати її до групи куль"""
         if len(self.bullets) < self.settings.bullets_allowed:
@@ -74,6 +94,16 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+        self._check_bullet_alien_collisions()
+
+    def _check_bullet_alien_collisions(self):
+        """Реакція на зіткнення куль з прибульцями"""
+
+        # Виділити всі наявні кулі, що зіткнулися
+        colisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        if not self.aliens:
+            self.bullets.empty()
+            self._create_fleet()
 
     def _create_fleet(self):
         """Створити флот прибульців"""
@@ -114,14 +144,52 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
         pygame.display.flip()
 
+    def _update_aliens(self):
+        """Перевірити, чи флот знаходиться на краю, тоді оновити позиції всіх прибульців у флоті"""
+
+        self._check_fleet_edges()
+        self.aliens.update()
+        # Шукати зіткнення куль із прибульцями
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+            # Шукати, чи котрийсь із прибульців досяг нижнього краю екрана
+        self._check_aliens_bottom()
+
+    def _check_aliens_bottom(self):
+        """Перевірити, чи котрийсь із прибульців досяг нижнього краю екрана"""
+
+        screen_rect = self.screen.get_rect()
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom == screen_rect.bottom:
+                # Зреагувату, ніби корабель бідбито
+                self._ship_hit()
+                break
+
+    def _check_fleet_edges(self):
+        """Реагує відповідно чи досяг краю екрану один із прибульців"""
+
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """Спуск всього флоту та зміна його напрямку"""
+
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
     def run_game(self):
         """Розпочинае головний цикл гри"""
 
         while True:
             # Слідкуе за поведінкою миші та клавіатури та миші
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
             self._update_screen()
 
 
