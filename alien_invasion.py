@@ -7,6 +7,7 @@ from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 
 class AlienInvasion:
@@ -23,7 +24,9 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         # # self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
+        # Створити екземпляр для збереження ігрової статистики та табло на екрані
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -58,6 +61,9 @@ class AlienInvasion:
                 self.settings.initialize_dynamic_settings()
                 self.stats.reset_stats()
                 self.stats.game_active = True
+                self.sb.prep_score()
+                self.sb.prep_level()
+                self.sb.prep_ships()
                 # Позбавитися надлишку прибульців та куль
                 self.aliens.empty()
                 self.bullets.empty()
@@ -91,8 +97,9 @@ class AlienInvasion:
         """Реагувати на зіткнення прибульця з кораблем"""
 
         if self.stats.ships_left > 0:
-            # Зменшити ships_left
+            # Зменшити ships_left та оновити табло
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
             # Позбавитись надлишку прибульців та куль
             self.aliens.empty()
             self.bullets.empty()
@@ -103,6 +110,7 @@ class AlienInvasion:
             sleep(0.5)
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _fire_bullet(self):
         """Створити кулю та додати її до групи куль"""
@@ -126,10 +134,19 @@ class AlienInvasion:
 
         # Виділити всі наявні кулі, що зіткнулися
         colisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        if colisions:
+            for aliens in colisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
+            self.sb.check_high_score()
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+            # Збільшити рівень
+            self.stats.level += 1
+            self.sb.prep_level()
 
     def _create_fleet(self):
         """Створити флот прибульців"""
@@ -168,6 +185,8 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+        # Намалювати інформацію про рахунок
+        self.sb.show_score()
         # Намалювати кнопку, якщо гра не активна
         if not self.stats.game_active:
             self.play_button.draw_button()

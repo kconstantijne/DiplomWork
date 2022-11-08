@@ -1,5 +1,6 @@
 import pygame.font
 
+
 class Button:
 
     def __init__(self, ai_game, msg):
@@ -11,7 +12,7 @@ class Button:
         # Задати розміри та властивості кнопки
         self.width, self.height = 200, 50
         self.button_color = (112, 16, 161)
-        self.text_color = (255, 255, 255)
+        self.text_color = (255, 205, 178)
         self.font = pygame.font.SysFont(None, 48)
 
         # Створити об'єкт rect та відцентрувати його
