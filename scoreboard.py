@@ -15,7 +15,7 @@ class Scoreboard:
         self.stats = ai_game.stats
 
         # Налаштування шрифту для відображення рахунку
-        self.text_color = (255, 205, 178)
+        self.text_color = (0, 0, 0)
         self.font = pygame.font.SysFont(None, 48)
 
         # Підготувати зображення з початковим рахунком

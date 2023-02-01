@@ -8,7 +8,7 @@ class GameStats:
         """Ініціалізація статистики"""
 
         self.settings = ai_game.settings
-        # Рекаорд не анулюеться
+        # Рекорд не анулюеться
         self.high_score = 0
         self.reset_stats()
         # Розпочати гру в активному стані
@@ -17,7 +17,7 @@ class GameStats:
         pygame.mouse.set_visible(True)
 
     def reset_stats(self):
-        """ніціалізація статистики, що може змінюватись вродовж гри"""
+        """Ініціалізація статистики, що може змінюватись вродовж гри"""
         self.ships_left = self.settings.ship_limit
         self.score = 0
         self.level = 1
