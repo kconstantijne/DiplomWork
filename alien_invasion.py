@@ -9,19 +9,21 @@ from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
 from button_stats import ButtonStatistic
-# from statistic.ai_stats import start
+from statistic.ai_stats import AIStatistic
 
 
 class AlienInvasion:
     """Загальній клас, який керую повединкою та ресурсами гри"""
 
-    def __init__(self):
+    def __init__(self, user_name):
         """Ініціалізує гру та створює ресурси гри"""
 
         pygame.init()
         self.settings = Settings()
-        # Запуск гри в повноекранному режимі
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # Запуск гри
+        img = pygame.image.load('src/image/ufo.png')
+        pygame.display.set_icon(img)
+        self.screen = pygame.display.set_mode((1800, 900))
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         # # self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
@@ -30,10 +32,12 @@ class AlienInvasion:
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
         self.ship = Ship(self)
+        self.user_name = user_name
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         # Створити флот прибульців
         self._create_fleet()
+        self.statistic = AIStatistic(self)
         # Створити кнопку "Почати гру"
         self.play_button = Button(self, "Почати гру")
         self.stat_button = ButtonStatistic(self, "Показати статистику")
@@ -59,8 +63,7 @@ class AlienInvasion:
         if self.stat_button.rect.collidepoint(mouse_pos):
             button_clicked = self.stat_button.rect.collidepoint(mouse_pos)
             if button_clicked and not self.stats.game_active:
-                # start()
-                print("Statistic button was pressed")
+                self.statistic.stat_window(self.user_name, self.stats.high_score, self.stats.level)
 
     def _check_play_button(self, mouse_pos):
         """Розпочати нову гру, коли користувач натисне кнопку 'Почати гру'"""
@@ -252,8 +255,3 @@ class AlienInvasion:
                 self._update_aliens()
             self._update_screen()
 
-
-if __name__ == '__main__':
-    # Створюе екземпляр гри та запускае гру
-    ai = AlienInvasion()
-    ai.run_game()

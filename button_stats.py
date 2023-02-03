@@ -10,7 +10,7 @@ class ButtonStatistic:
         self.screen_rect = self.screen.get_rect()
 
         # Задати розміри та властивості кнопки
-        self.width, self.height = 400, 50
+        self.width, self.height = 250, 50
         self.button_color = (86, 55, 240)
         self.text_color = (0, 0, 0)
         self.font = pygame.font.SysFont(None, 35)
