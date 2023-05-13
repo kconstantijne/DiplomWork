@@ -1,7 +1,7 @@
 import pygame.font
 from pygame.sprite import Group
+
 from ship import Ship
-from db import DataBase
 
 
 class Scoreboard:
@@ -30,7 +30,9 @@ class Scoreboard:
 
         rounded_score = round(self.stats.score, -1)
         score_str = "{:,}".format(rounded_score)
-        self.score_image = self.font.render(score_str, True, self.text_color, self.settings.bg_color)
+        self.score_image = self.font.render(
+            score_str, True, self.text_color, self.settings.bg_color
+        )
 
         # Показати рахунок у верхньому куту екрану
         self.score_rect = self.score_image.get_rect()
@@ -41,7 +43,9 @@ class Scoreboard:
         """Перетворити рівень у зображення"""
 
         level_str = str(self.stats.level)
-        self.level_image = self.font.render(level_str, True, self.text_color, self.settings.bg_color)
+        self.level_image = self.font.render(
+            level_str, True, self.text_color, self.settings.bg_color
+        )
 
         # Розташувати рівень під рахунком
         self.level_rect = self.level_image.get_rect()
@@ -64,7 +68,9 @@ class Scoreboard:
 
         high_score = round(self.stats.high_score, -1)
         high_score_str = "{:,}".format(high_score)
-        self.high_score_image = self.font.render(high_score_str, True, self.text_color, self.settings.bg_color)
+        self.high_score_image = self.font.render(
+            high_score_str, True, self.text_color, self.settings.bg_color
+        )
 
         # Відцентрувати рекорд по горизонталі
         self.high_score_rect = self.high_score_image.get_rect()
@@ -86,4 +92,3 @@ class Scoreboard:
             self.stats.high_score = self.stats.score
             self.prep_high_score()
             print(f"New high score: {self.stats.high_score}")
-
