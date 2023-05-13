@@ -18,3 +18,4 @@ class Record:
         self.record_rect.left = self.record_rect.left + 20
         self.record_rect.top = 20
         self.screen.blit(self.record_image, self.record_rect)
+

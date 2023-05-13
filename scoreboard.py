@@ -1,6 +1,7 @@
 import pygame.font
 from pygame.sprite import Group
 from ship import Ship
+from db import DataBase
 
 
 class Scoreboard:
@@ -84,3 +85,5 @@ class Scoreboard:
         if self.stats.score > self.stats.high_score:
             self.stats.high_score = self.stats.score
             self.prep_high_score()
+            print(f"New high score: {self.stats.high_score}")
+
