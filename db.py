@@ -56,9 +56,7 @@ class DataBase:
         pass
 
     def count_query(self, table: str, username: str):
-        count_query = f"""
-        SELECT COUNT(*) FROM {table} WHERE name = '{username}';
-        """
+        count_query = f"SELECT COUNT(*) FROM {table} WHERE name = '{username}'"
 
         self.cursor.execute(count_query)
         return self.cursor.fetchone()[0]
