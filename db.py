@@ -30,20 +30,24 @@ class DataBase:
         self.cursor = value
 
     def init_connection(self):
-        self.connection: psycopg2.extensions.connection = psycopg2.connect(host=self.host, port=self.port,
-                                                                           database=self.database, user=self.user,
-                                                                           password=self.password)
+        self.connection: psycopg2.extensions.connection = psycopg2.connect(
+            host=self.host,
+            port=self.port,
+            database=self.database,
+            user=self.user,
+            password=self.password,
+        )
 
     def init_cursor(self):
         self.cursor: psycopg2.extensions.cursor = self.connection.cursor()
 
     def init_database(self):
-        create_table_query = '''
+        create_table_query = """
             CREATE TABLE IF NOT EXISTS high_scores (
                 name varchar(50),
                 score integer
             );
-        '''
+        """
         self.cursor.execute(create_table_query)
 
     def save_score(self):
@@ -52,4 +56,3 @@ class DataBase:
     def __del__(self):
         self.cursor.close()
         self.connection.close()
-
