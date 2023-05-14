@@ -29,10 +29,12 @@ class AlienInvasion:
         # # self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
         # Створити екземпляр для збереження ігрової статистики та табло на екрані
-        self.stats = GameStats(self)
-        self.sb = Scoreboard(self)
-        self.ship = Ship(self)
+
         self.user_name = user_name
+        self.stats = GameStats(self)
+        self.sb = Scoreboard(self, user_name)
+        self.ship = Ship(self)
+
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         # Створити флот прибульців

@@ -1,19 +1,21 @@
 import pygame.font
 from pygame.sprite import Group
-
+import db
+from db import DataBase
 from ship import Ship
 
 
 class Scoreboard:
     """Клас. що виводить рахунок"""
 
-    def __init__(self, ai_game):
+    def __init__(self, ai_game, user_name):
         """Ініціалізація атрибутів, пов'язаних із рахунком"""
         self.ai_game = ai_game
         self.screen = ai_game.screen
         self.screen_rect = self.screen.get_rect()
         self.settings = ai_game.settings
         self.stats = ai_game.stats
+        self.user_name = user_name
 
         # Налаштування шрифту для відображення рахунку
         self.text_color = (0, 0, 0)
@@ -91,4 +93,5 @@ class Scoreboard:
         if self.stats.score > self.stats.high_score:
             self.stats.high_score = self.stats.score
             self.prep_high_score()
-            print(f"New high score: {self.stats.high_score}")
+            a = db.DataBase()
+            a.select_function("high_scores", self.user_name, self.stats.high_score)
