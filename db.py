@@ -93,7 +93,3 @@ class DataBase:
             self.cursor.close()
         if self.connection:
             self.connection.close()
-
-
-# test = DataBase()
-# test.update_query("high_scores", "TestNameOne", 100)

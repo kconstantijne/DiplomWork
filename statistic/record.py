@@ -12,10 +12,9 @@ class Record:
         self.font = pygame.font.SysFont(None, 28)
 
     def show_record(self, user_name, high_score, high_level):
-        db_call = DataBase()
-        a = db_call.check_score("high_scores", user_name)
-        msg = f"Hello, {a[0]}. " \
-              f"Your high score is: {a[1]}. " \
+        db_call = DataBase().check_score("high_scores", user_name)
+        msg = f"Hello, {db_call[0]}. " \
+              f"Your high score is: {db_call[1]}. " \
               f"Last score: {high_score}. " \
               f"Last level: {high_level}"
         self.record_image = self.font.render(msg, True, self.text_color, self.settings.background_color)
