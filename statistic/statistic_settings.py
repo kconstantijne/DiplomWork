@@ -3,8 +3,8 @@ import pygame
 
 class StatisticSettings:
     def __init__(self):
-        self.screen_width = 300
-        self.screen_height = 600
+        self.screen_width = 100
+        self.screen_height = 730
         self.background_color = (86, 55, 240)
         self.img = pygame.image.load('src/image/star.png')
         self.title = "Alien Invasion Statistics"

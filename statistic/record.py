@@ -1,4 +1,5 @@
 import pygame
+from db import DataBase
 from statistic.statistic_settings import StatisticSettings
 
 
@@ -11,8 +12,12 @@ class Record:
         self.font = pygame.font.SysFont(None, 28)
 
     def show_record(self, user_name, high_score, high_level):
-        msg = f"Hello, {user_name}." \
-              f"Your high score is: {high_score}. And level was {high_level}"
+        db_call = DataBase()
+        a = db_call.check_score("high_scores", user_name)
+        msg = f"Hello, {a[0]}. " \
+              f"Your high score is: {a[1]}. " \
+              f"Last score: {high_score}. " \
+              f"Last level: {high_level}"
         self.record_image = self.font.render(msg, True, self.text_color, self.settings.background_color)
         self.record_rect = self.record_image.get_rect()
         self.record_rect.left = self.record_rect.left + 20

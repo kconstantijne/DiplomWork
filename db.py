@@ -52,10 +52,10 @@ class DataBase:
         self.cursor.execute(create_table_query)
         self.connection.commit()
 
-    def check_table(self, table: str):
-        query_to_print = f"SELECT name, score FROM {table};"
+    def check_score(self, table: str, username: str):
+        query_to_print = f"SELECT name, score FROM {table} WHERE name = '{username}';"
         self.cursor.execute(query_to_print)
-        return self.cursor.fetchall()
+        return self.cursor.fetchone()
 
     def count_query(self, table: str, username: str):
         count_query = f"SELECT COUNT(*) FROM {table} WHERE name = '{username}';"
@@ -70,9 +70,16 @@ class DataBase:
         print("Done!")
         return self.connection.commit()
 
-    def update_query(self, table: str, user_name: str, score: int):
-        query_to_update = f"UPDATE {table} SET score = {score} WHERE name = '{user_name}';"
-        self.cursor.execute(query_to_update)
+    def update_query(self, table: str, username: str, score: int):
+        check_query = f"SELECT score FROM {table};"
+        self.cursor.execute(check_query)
+        score_check = self.cursor.fetchone()[0]
+        if score > score_check:
+            query_to_update = f"UPDATE {table} SET score = {score} WHERE name = '{username}';"
+            self.cursor.execute(query_to_update)
+        else:
+            query_to_update = f"UPDATE {table} SET score = {score_check} WHERE name = '{username}';"
+            self.cursor.execute(query_to_update)
         return self.connection.commit()
 
     def select_function(self, table: str, user_name: str, score: int):
@@ -88,11 +95,5 @@ class DataBase:
             self.connection.close()
 
 
-testDB = DataBase()
-# c = testDB.count_query("high_scores", "aaa")
-# print(c)
-# b = testDB.add_query("high_scores", "aaa", 45000)
-# d = testDB.count_query("high_scores", "aaa")
-a = testDB.check_table("high_scores")
-# print(d)
-print(a)
+# test = DataBase()
+# test.update_query("high_scores", "TestNameOne", 100)
